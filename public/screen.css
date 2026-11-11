@@ -156,14 +156,16 @@ body.tv .card-title { font-size: clamp(10px, 1.4vh, 12px); margin-bottom: .5vh; 
 body.tv .turn-card .who { font-size: clamp(18px, 3.2vh, 28px); }
 body.tv .turn-card .what { font-size: clamp(13px, 2vh, 18px); }
 body.tv .pending { font-size: clamp(13px, 1.9vh, 17px); line-height: 1.35; flex: none; }
-body.tv .players { gap: .8vh; flex: none; }
-body.tv .pl { padding: .7vh 8px .7vh 0; gap: 8px; border-radius: 10px; }
-body.tv .pl .name { font-size: clamp(14px, 2.4vh, 22px); line-height: 1.2; }
-body.tv .pl .off { font-size: clamp(10px, 1.4vh, 12px); }
-body.tv .pl .stats { font-size: clamp(12px, 1.75vh, 17px); line-height: 1.35; gap: 0 10px; margin-top: 0; }
-body.tv .pl .vp { font-size: clamp(20px, 3.4vh, 30px); min-width: 44px; }
-body.tv .log-card { flex: 1 1 0; min-height: 0; }
-body.tv .log { max-height: none; min-height: 0; font-size: clamp(12px, 1.7vh, 16px); }
+/* --k (set by screen.js) shrinks the player cards a little when the side panel would otherwise overflow,
+   e.g. while trade offers and the special-building note are showing at the same time. */
+body.tv .players { gap: calc(var(--k, 1) * 1vh); flex: none; }
+body.tv .pl { padding: calc(var(--k, 1) * 1vh) 8px calc(var(--k, 1) * 1vh) 0; gap: 8px; border-radius: 10px; }
+body.tv .pl .name { font-size: calc(var(--k, 1) * clamp(15px, 2.9vh, 26px)); line-height: 1.2; }
+body.tv .pl .off { font-size: calc(var(--k, 1) * clamp(10px, 1.5vh, 13px)); }
+body.tv .pl .stats { font-size: calc(var(--k, 1) * clamp(12px, 2.05vh, 20px)); line-height: 1.35; gap: 0 10px; margin-top: 0; }
+body.tv .pl .vp { font-size: calc(var(--k, 1) * clamp(20px, 4vh, 34px)); min-width: 44px; }
+/* No game log on the big screen: the players get the room instead */
+.log-card { display: none !important; }
 body.tv .corner { gap: 8px; }
 body.tv .banner { font-size: clamp(14px, 2.2vh, 21px); padding: 7px 13px; line-height: 1.25; }
 body.tv .die { width: clamp(46px, 7.4vh, 64px); height: clamp(46px, 7.4vh, 64px); padding: clamp(7px, 1.2vh, 9px); }

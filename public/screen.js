@@ -92,7 +92,21 @@ function render() {
   renderLog();
   renderWinner();
   if (editPid) renderEdit();
+  fitSide();
 }
+
+// TV: keep the whole side panel on screen — shrink the player cards a little if needed (never scroll).
+function fitSide() {
+  if (!IS_TV) return;
+  const side = document.querySelector('.side'), pl = $('players');
+  let k = 1;
+  pl.style.setProperty('--k', '1');
+  while (side.scrollHeight > side.clientHeight + 1 && k > 0.6) {
+    k -= 0.04;
+    pl.style.setProperty('--k', k.toFixed(2));
+  }
+}
+window.addEventListener('resize', () => { if (V) fitSide(); });
 
 // How much open sea is left of the island, so the corner message + dice can sit there without covering tiles.
 function fitCorner() {
@@ -251,7 +265,7 @@ function renderPending(c) {
       ${dot(b)}<b>${esc(b.name)}</b> may build or buy a development card<span class="host-only"> (no trading, no playing cards). They tap <i>Done</i> on their phone</span>.
       <div class="host-only"><button class="btn sm" data-a="host:sbpSkip">Skip ${esc(b.name)}</button></div>`);
   }
-  if (t && t.step === 'robber') parts.push(`<div class="card-title">Bandit</div>Tap any tile on the board to move the bandit.<div class="host-only"><button class="btn sm" data-a="host:skipRobber">Skip</button></div>`);
+  if (t && t.step === 'robber') parts.push(`<div class="card-title">Bandit</div><span class="host-only">Tap any tile on the board to move the bandit.</span><span class="tv-only">${esc(c.name)} is moving the bandit on their phone…</span><div class="host-only"><button class="btn sm" data-a="host:skipRobber">Skip</button></div>`);
   if (t && t.step === 'steal') {
     parts.push(`<div class="card-title">${esc(c.name)} robs…</div><div class="host-only">${t.victims.map((id) => `<button class="btn" data-steal="${id}">${dot(playerById(id))}${esc(playerById(id).name)}</button>`).join('')}</div><div class="tv-only">Choosing on their phone…</div>`);
   }
