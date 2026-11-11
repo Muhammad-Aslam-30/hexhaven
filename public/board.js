@@ -39,15 +39,17 @@ const BoardRenderer = (() => {
   function viewOf(board) {
     const xs = board.vertices.map((v) => v.x).concat(board.ports.map((p) => p.x));
     const ys = board.vertices.map((v) => v.y).concat(board.ports.map((p) => p.y));
-    const m = 0.75;
+    const m = 0.45; // just enough room for the harbour badges (radius 0.36) at the edges
     const minX = Math.min(...xs) - m, maxX = Math.max(...xs) + m, minY = Math.min(...ys) - m, maxY = Math.max(...ys) + m;
     return { x: minX * S, y: minY * S, w: (maxX - minX) * S, h: (maxY - minY) * S };
   }
 
   function render(svg, view, opts = {}) {
     const { board, buildings, roads, players, legal, mode, turn } = view;
-    const colorOf = {};
-    players.forEach((p) => { colorOf[p.id] = p.hex; });
+    // Dark player colours (black) get a light outline and light glowing spots so they stay visible.
+    const isDark = (hex) => { const n = parseInt(String(hex || '#fff').slice(1), 16); return ((n >> 16) * 0.299 + ((n >> 8) & 255) * 0.587 + (n & 255) * 0.114) < 70; };
+    const colorOf = {}, edgeOf = {}, glowOf = {};
+    players.forEach((p) => { colorOf[p.id] = p.hex; edgeOf[p.id] = isDark(p.hex) ? '#f1f5f9' : '#141414'; glowOf[p.id] = isDark(p.hex) ? '#cbd5e1' : p.hex; });
     const { hexes, vertices, edges, ports } = board;
 
     const vb = viewOf(board);
@@ -134,7 +136,7 @@ const BoardRenderer = (() => {
       const e = edges[eid];
       const [a, b] = shorten(vertices[e.v[0]], vertices[e.v[1]], 0.16);
       o.push(`<g data-edge="${eid}"${fx('e' + eid, 'grow', 600)}>
-        <line x1="${a.x * S}" y1="${a.y * S}" x2="${b.x * S}" y2="${b.y * S}" stroke="#141414" stroke-width="${S * 0.22}" stroke-linecap="round"/>
+        <line x1="${a.x * S}" y1="${a.y * S}" x2="${b.x * S}" y2="${b.y * S}" stroke="${edgeOf[owner] || '#141414'}" stroke-width="${S * 0.22}" stroke-linecap="round"/>
         <line x1="${a.x * S}" y1="${a.y * S}" x2="${b.x * S}" y2="${b.y * S}" stroke="${colorOf[owner]}" stroke-width="${S * 0.14}" stroke-linecap="round"/>
       </g>`);
     });
@@ -161,14 +163,14 @@ const BoardRenderer = (() => {
         ? [[-0.24, 0.02], [-0.12, 0.02], [0.08, 0.05], [0.2, 0.05], [-0.18, -0.16]]
         : [[-0.07, 0.0], [0.07, 0.0]];
       o.push(`<g data-vertex="${vid}"${fx('v' + vid + b.type, 'drop', 700)}>
-        <polygon points="${b.type === 'city' ? shape(v, CITY, 1.2) : shape(v, SETTLEMENT, 1.3)}" fill="${colorOf[b.owner]}" stroke="#141414" stroke-width="3" stroke-linejoin="round" filter="url(#shadow)"/>
+        <polygon points="${b.type === 'city' ? shape(v, CITY, 1.2) : shape(v, SETTLEMENT, 1.3)}" fill="${colorOf[b.owner]}" stroke="${edgeOf[b.owner] || '#141414'}" stroke-width="3" stroke-linejoin="round" filter="url(#shadow)"/>
         ${wins.map(([dx, dy]) => `<rect class="win" x="${((v.x + dx) * S - 2.6).toFixed(1)}" y="${((v.y + dy) * S - 2.6).toFixed(1)}" width="5.2" height="5.2" rx="1"/>`).join('')}
       </g>`);
     });
 
     // Legal targets (glowing spots)
     if (mode && legal) {
-      const c = mode.kind === 'remove' ? '#ff5d5d' : colorOf[mode.pid] || '#fff';
+      const c = mode.kind === 'remove' ? '#ff5d5d' : glowOf[mode.pid] || '#fff';
       const cls = opts.interactive ? 'target clickable' : 'target';
       legal.hexes.forEach((hid) => {
         o.push(`<polygon class="${cls} hex-target" data-hex="${hid}" points="${hexPoints(hexes[hid], 0.9)}" fill="rgba(255,255,255,.12)" stroke="#fff" stroke-width="4" stroke-dasharray="10 8"/>`);
@@ -193,7 +195,7 @@ const BoardRenderer = (() => {
     // The spot the active player is considering (before they confirm) — a bright pulsing marker.
     const pv = mode && mode.preview;
     if (pv) {
-      const c = colorOf[mode.pid] || '#fff';
+      const c = glowOf[mode.pid] || '#fff';
       if (pv.v != null && vertices[pv.v]) {
         const v = vertices[pv.v];
         o.push(`<g class="preview" pointer-events="none"><circle cx="${v.x * S}" cy="${v.y * S}" r="${S * 0.3}" fill="${c}" fill-opacity=".35" stroke="#fff" stroke-width="5"/>

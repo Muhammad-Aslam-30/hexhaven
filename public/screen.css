@@ -39,11 +39,16 @@ body.present .top-btns > :not(#btnPresent) { display: none; }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .45; } }
 @keyframes hot { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
 
-.banner { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); background: rgba(11, 18, 32, .85); border: 1px solid var(--line); padding: 10px 22px; border-radius: 999px; font-size: 22px; font-weight: 700; white-space: nowrap; box-shadow: 0 6px 24px rgba(0,0,0,.35); max-width: 92%; overflow: hidden; text-overflow: ellipsis; }
+/* Bottom-left corner: the status message sits right above the dice, inside the sea beside the island.
+   --gutter (set by screen.js) is the width of open sea left of the island. */
+.corner { position: absolute; left: 18px; bottom: 18px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
+  max-width: max(250px, calc(var(--gutter, 300px) - 30px)); pointer-events: none; z-index: 2; }
+.banner { background: rgba(11, 18, 32, .88); border: 1px solid var(--line); padding: 9px 16px; border-radius: 16px; font-size: clamp(15px, 2.5vh, 22px); font-weight: 700; line-height: 1.3; box-shadow: 0 6px 24px rgba(0,0,0,.35); max-width: 100%; overflow-wrap: anywhere; pointer-events: auto; }
 .banner:empty { display: none; }
-.dot { display: inline-block; width: .8em; height: .8em; border-radius: 50%; border: 2px solid #111; vertical-align: -1px; margin-right: 6px; }
+.dot { display: inline-block; width: .8em; height: .8em; border-radius: 50%; border: 2px solid #111; vertical-align: -1px; margin-right: 6px; box-shadow: 0 0 0 1.5px rgba(255,255,255,.55); }
 
-.dice-box { position: absolute; left: 20px; bottom: 20px; display: flex; gap: 12px; align-items: center; }
+.dice-box { display: flex; gap: 12px; align-items: center; }
+.dice-box:empty { display: none; }
 .die { width: 64px; height: 64px; background: #fdfdfb; border-radius: 12px; box-shadow: 0 6px 18px rgba(0,0,0,.45), inset 0 -4px 0 #d8d6cf; display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr); padding: 9px; }
 .die.red { background: #e5484d; box-shadow: 0 6px 18px rgba(0,0,0,.45), inset 0 -4px 0 #b3363a; }
 .die.red i { background: #fff; }
@@ -91,7 +96,7 @@ body.present .top-btns > :not(#btnPresent) { display: none; }
 .pl { display: grid; grid-template-columns: 8px 1fr auto; gap: 10px; align-items: center; background: var(--panel2); border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px 8px 0; overflow: hidden; }
 .pl.cur { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(255,209,102,.35); }
 body:not(.tv) .pl { cursor: pointer; }
-.pl .stripe { align-self: stretch; }
+.pl .stripe { align-self: stretch; box-shadow: inset 0 0 0 1px rgba(255,255,255,.4); }
 .pl .name { font-weight: 800; font-size: 17px; display: flex; gap: 6px; align-items: center; }
 .pl .off { font-size: 11px; color: var(--danger); font-weight: 600; }
 .pl .stats { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 14px; color: var(--muted); margin-top: 2px; }
@@ -141,16 +146,34 @@ body:not(.tv) .pl { cursor: pointer; }
 .toast.err { background: #4a1c24; border-color: #7a2a33; }
 @keyframes tin { from { opacity: 0; transform: translateY(-8px); } }
 
-/* TV: larger text, no controls */
-body.tv .app { grid-template-columns: 1fr 440px; }
-body.tv .pl .name { font-size: 22px; }
-body.tv .pl .stats { font-size: 17px; }
-body.tv .log { font-size: 16px; }
+/* TV: no controls, and everything in the side panel fits the screen height without scrolling.
+   Sizes follow the screen height (vh) so 6 players fit on a 720p TV as well as on 1080p. */
+body.tv .app { grid-template-columns: 1fr clamp(300px, 25vw, 440px); }
+body.tv .side { overflow: hidden; gap: 1vh; padding: 1.4vh 12px; }
+body.tv .logo { font-size: clamp(15px, 2.4vh, 22px); }
+body.tv .card { padding: 1vh 12px; border-radius: 12px; }
+body.tv .card-title { font-size: clamp(10px, 1.4vh, 12px); margin-bottom: .5vh; }
+body.tv .turn-card .who { font-size: clamp(18px, 3.2vh, 28px); }
+body.tv .turn-card .what { font-size: clamp(13px, 2vh, 18px); }
+body.tv .pending { font-size: clamp(13px, 1.9vh, 17px); line-height: 1.35; flex: none; }
+body.tv .players { gap: .8vh; flex: none; }
+body.tv .pl { padding: .7vh 8px .7vh 0; gap: 8px; border-radius: 10px; }
+body.tv .pl .name { font-size: clamp(14px, 2.4vh, 22px); line-height: 1.2; }
+body.tv .pl .off { font-size: clamp(10px, 1.4vh, 12px); }
+body.tv .pl .stats { font-size: clamp(12px, 1.75vh, 17px); line-height: 1.35; gap: 0 10px; margin-top: 0; }
+body.tv .pl .vp { font-size: clamp(20px, 3.4vh, 30px); min-width: 44px; }
+body.tv .log-card { flex: 1 1 0; min-height: 0; }
+body.tv .log { max-height: none; min-height: 0; font-size: clamp(12px, 1.7vh, 16px); }
+body.tv .corner { gap: 8px; }
+body.tv .banner { font-size: clamp(14px, 2.2vh, 21px); padding: 7px 13px; line-height: 1.25; }
+body.tv .die { width: clamp(46px, 7.4vh, 64px); height: clamp(46px, 7.4vh, 64px); padding: clamp(7px, 1.2vh, 9px); }
+body.tv .die i { width: clamp(8px, 1.5vh, 11px); height: clamp(8px, 1.5vh, 11px); }
+body.tv .dice-sum { font-size: clamp(32px, 5.6vh, 44px); min-width: 0; }
 
 @media (max-width: 900px) {
   body { overflow: auto; }
   .app { grid-template-columns: 1fr; grid-template-rows: 70vh auto; height: auto; }
-  .banner { font-size: 16px; }
+  .banner { font-size: 15px; }
 }
 .btn.peek { width: 100%; margin-top: 8px; }
 .banner.clickable-banner { cursor: pointer; }

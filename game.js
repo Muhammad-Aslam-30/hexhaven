@@ -38,7 +38,7 @@ const sizeFor = (n) => (n >= 5 ? 'extension' : 'basic');
 const MAX_PLAYERS = 6;
 const COLORS = {
   red: '#e5484d', blue: '#3b82f6', orange: '#f59e0b',
-  white: '#f1f5f9', green: '#22c55e', purple: '#a855f7',
+  white: '#f1f5f9', green: '#22c55e', purple: '#a855f7', black: '#1f2328',
 };
 const DEV_NAMES = {
   knight: 'Knight', roadBuilding: 'Road Building', yearOfPlenty: 'Year of Plenty',

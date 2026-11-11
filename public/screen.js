@@ -79,6 +79,7 @@ function render() {
     anim,
   });
   $('fx').setAttribute('viewBox', $('board').getAttribute('viewBox'));
+  fitCorner();
   scene.update(V, { intro: anim.intro });
   playEffects(events);
   renderBanner(c);
@@ -92,6 +93,16 @@ function render() {
   renderWinner();
   if (editPid) renderEdit();
 }
+
+// How much open sea is left of the island, so the corner message + dice can sit there without covering tiles.
+function fitCorner() {
+  if (!V || !V.board) return;
+  const wrap = $('board').getBoundingClientRect();
+  const vb = BoardRenderer.viewOf(V.board);
+  const s = Math.min(wrap.width / vb.w, wrap.height / vb.h);
+  $('corner').style.setProperty('--gutter', `${Math.round((wrap.width - vb.w * s) / 2)}px`);
+}
+window.addEventListener('resize', fitCorner);
 
 function renderBanner(c) {
   const b = $('banner');
@@ -237,7 +248,7 @@ function renderPending(c) {
   if (t && t.sbp) {
     const b = playerById(t.sbp.pid);
     parts.push(`<div class="card-title">Special building phase · ${t.sbp.at + 1} of ${t.sbp.total}</div>
-      ${dot(b)}<b>${esc(b.name)}</b> may build or buy a development card (no trading, no playing cards). They tap <i>Done</i> on their phone.
+      ${dot(b)}<b>${esc(b.name)}</b> may build or buy a development card<span class="host-only"> (no trading, no playing cards). They tap <i>Done</i> on their phone</span>.
       <div class="host-only"><button class="btn sm" data-a="host:sbpSkip">Skip ${esc(b.name)}</button></div>`);
   }
   if (t && t.step === 'robber') parts.push(`<div class="card-title">Bandit</div>Tap any tile on the board to move the bandit.<div class="host-only"><button class="btn sm" data-a="host:skipRobber">Skip</button></div>`);
