@@ -1,0 +1,19 @@
+{
+  "name": "hexhaven",
+  "version": "1.0.0",
+  "description": "Hex island trading & building game for up to 6 players: laptop/TV board + phone hands",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test/sim.js && node test/hostless.js",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^4.22.3",
+    "qrcode": "^1.5.4",
+    "socket.io": "^4.8.4"
+  }
+}

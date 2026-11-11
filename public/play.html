@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0b1220">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Hexhaven</title>
+<link rel="stylesheet" href="play.css">
+</head>
+<body>
+<div id="conn" class="conn hidden">Reconnecting…</div>
+
+<main id="join" class="screen hidden">
+  <h1>⬢ Hexhaven</h1>
+  <div id="joinForm">
+    <label class="lbl" for="name">Your name</label>
+    <input id="name" maxlength="14" autocomplete="off" placeholder="e.g. Sam">
+    <div class="lbl">Pick a colour</div>
+    <div id="swatches" class="swatches"></div>
+    <button id="btnJoin" class="btn primary big">Join game</button>
+  </div>
+  <div id="rejoin" class="hidden">
+    <p class="muted">The game has started. Tap your name to get back in:</p>
+    <div id="rejoinList" class="rejoin-list"></div>
+  </div>
+</main>
+
+<main id="game" class="screen hidden">
+  <header class="bar">
+    <div id="meName" class="me"></div>
+    <div class="bar-right"><button class="btn sm" data-map="open" aria-label="Show the island map">🗺️ Map</button><div id="meVp" class="vp"></div></div>
+  </header>
+  <div id="turnPill" class="turn-pill"></div>
+  <div id="prompts"></div>
+  <div id="lobbyWait" class="card hidden"></div>
+
+  <section id="handSec">
+    <div class="sec-title">Your cards <span id="handCount"></span></div>
+    <div id="hand" class="hand"></div>
+  </section>
+
+  <section id="actions" class="actions"></section>
+
+  <section id="devSec">
+    <div class="sec-title">Development cards</div>
+    <div id="devs" class="devs"></div>
+  </section>
+
+  <section>
+    <div class="sec-title">Players</div>
+    <div id="others" class="others"></div>
+  </section>
+
+  <details class="costs">
+    <summary>Building costs</summary>
+    <div>🛣️ Road — 🌲🧱</div>
+    <div>🏠 Settlement — 🌲🧱🐑🌾 <span class="muted">(1 VP)</span></div>
+    <div>🏰 City — 🌾🌾🪨🪨🪨 <span class="muted">(2 VP)</span></div>
+    <div>📜 Dev card — 🐑🌾🪨</div>
+    <div class="muted" style="margin-top:6px">First to 10 VP wins. Longest road (5+) and largest army (3+ knights) are worth 2 VP each.</div>
+  </details>
+</main>
+
+<div id="sheet" class="sheet hidden"><div id="sheetCard" class="sheet-card"></div></div>
+
+<div id="map" class="map hidden" role="dialog" aria-label="Island map">
+  <div class="map-head"><b id="mapTitle">The island</b><div class="map-tools"><button class="btn sm" data-map="zoom" aria-label="Zoom">🔍</button><button class="btn sm" data-map="close" aria-label="Close map">✕</button></div></div>
+  <div class="map-scroll"><svg id="mapSvg" preserveAspectRatio="xMidYMid meet"></svg></div>
+  <div class="map-foot" id="mapFoot"></div>
+</div>
+<div id="toasts" class="toasts"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="art.js"></script>
+<script src="dice3d.js"></script>
+<script src="board.js"></script>
+<script src="play.js"></script>
+</body>
+</html>

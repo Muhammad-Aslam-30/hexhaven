@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hexhaven</title>
+<link rel="stylesheet" href="screen.css">
+</head>
+<body>
+<div class="app">
+  <section class="board-wrap">
+    <canvas id="sceneWorld" class="scene" aria-hidden="true"></canvas>
+    <canvas id="sceneShade" class="scene shade" aria-hidden="true"></canvas>
+    <canvas id="sceneGlow" class="scene glow" aria-hidden="true"></canvas>
+    <svg id="board" preserveAspectRatio="xMidYMid meet"></svg>
+    <svg id="fx" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
+    <div id="banner" class="banner"></div>
+    <div id="dice" class="dice-box"></div>
+
+    <!-- Lobby -->
+    <div id="lobby" class="lobby hidden">
+      <div class="lobby-card">
+        <h1>Hexhaven</h1>
+        <p class="sub">Scan to join with your phone (same Wi-Fi)</p>
+        <div id="sizeInfo" class="size-info"></div>
+        <div id="diceModeLobby" class="host-only lobby-dice"></div>
+        <img id="qr" alt="Join QR code">
+        <div id="joinUrl" class="join-url"></div>
+        <select id="ipPick" class="host-only hidden" title="Network address"></select>
+        <h3>Players <span id="pcount"></span></h3>
+        <ol id="lobbyPlayers" class="lobby-players"></ol>
+        <div class="row host-only">
+          <button id="btnNewBoard" class="btn">🔀 New island</button>
+          <label class="chk"><input type="checkbox" id="chkShuffle" checked> Random turn order</label>
+        </div>
+        <button id="btnStart" class="btn primary big host-only">Start game</button>
+        <button id="btnPeek" class="btn peek">👀 View island</button>
+        <p class="hint tv-only">Tap <b>Ready</b> on your phone — the game starts when everyone is ready.</p>
+      </div>
+    </div>
+
+    <!-- Winner -->
+    <div id="winner" class="winner hidden"></div>
+  </section>
+
+  <aside class="side">
+    <header class="top">
+      <div class="logo">⬢ Hexhaven</div>
+      <div class="top-btns host-only">
+        <button id="btnQR" class="btn sm" title="Show join code">📱 Join</button>
+        <button id="btnTV" class="btn sm" title="Open a display-only window for the TV">📺 TV window</button>
+        <button id="btnPresent" class="btn sm" title="Hide host controls (P)">🙈 Hide controls</button>
+        <button id="btnUndo" class="btn sm" title="Undo (Ctrl+Z)">↩️ Undo</button>
+        <button id="btnSave" class="btn sm" title="Save the game under a name">💾 Save</button>
+        <button id="btnLoad" class="btn sm" title="Load a named save or the start of an earlier turn">📂 Load</button>
+        <button id="btnNewGame" class="btn sm danger" title="Back to lobby with a new island">New game</button>
+      </div>
+    </header>
+
+    <div id="turnCard" class="card turn-card"></div>
+
+    <div class="card host-only controls">
+      <div class="card-title">Place pieces for</div>
+      <div id="playerPick" class="player-pick"></div>
+      <div class="tools">
+        <button class="tool" data-tool="road">🛣️ Road</button>
+        <button class="tool" data-tool="settlement">🏠 Settlement</button>
+        <button class="tool" data-tool="city">🏰 City</button>
+        <button class="tool" data-tool="bandit">🦹 Bandit</button>
+        <button class="tool" data-tool="remove">🧹 Remove</button>
+        <button class="tool" data-tool="">✖ Cancel</button>
+      </div>
+      <div class="row">
+        <label class="chk" title="Don't take resources from the player"><input type="checkbox" id="chkFree"> Free (no cost)</label>
+        <label class="chk" title="Allow any empty spot"><input type="checkbox" id="chkIgnore"> Ignore rules</label>
+        <label class="chk" title="Slow day-to-night cycle with lit windows"><input type="checkbox" id="chkDayNight" checked> Day &amp; night</label>
+      </div>
+    </div>
+
+    <div id="pending" class="card pending hidden"></div>
+    <div id="players" class="players"></div>
+    <div class="card log-card">
+      <div class="card-title">Game log</div>
+      <div id="log" class="log"></div>
+    </div>
+  </aside>
+</div>
+
+<!-- Host: edit a player's hand -->
+<div id="modal" class="modal hidden"><div class="modal-card" id="modalCard"></div></div>
+<div id="toasts" class="toasts"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="art.js"></script>
+<script src="dice3d.js"></script>
+<script src="board.js"></script>
+<script src="island.js"></script>
+<script src="screen.js"></script>
+</body>
+</html>
