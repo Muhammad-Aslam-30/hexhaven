@@ -47,7 +47,23 @@ $('chkDayNight').addEventListener('change', (e) => {
   try { localStorage.setItem(DN_KEY, e.target.checked ? '1' : '0'); } catch { /* storage blocked */ }
   scene.setDayNight(e.target.checked);
 });
+// Tile look: 'simple' = flat coloured tiles with icons (like the phone map), 'art' = the painted living island.
+// Press T on the laptop to switch; remembered on this computer and shared between the TV and host windows.
+const TILE_KEY = 'hexhaven-tiles';
+const simpleTiles = () => { try { return localStorage.getItem(TILE_KEY) !== 'art'; } catch { return true; } };
+document.body.classList.toggle('simple-tiles', simpleTiles());
+function setTileStyle(simple, announce) {
+  try { localStorage.setItem(TILE_KEY, simple ? 'simple' : 'art'); } catch { /* storage blocked */ }
+  document.body.classList.toggle('simple-tiles', simple);
+  if (V) render();
+  if (announce) toast(simple ? '🗺️ Simple tiles (press T for the painted island)' : '🎨 Painted island (press T for simple tiles)');
+}
+document.addEventListener('keydown', (e) => {
+  if (e.key.toLowerCase() !== 't' || e.ctrlKey || e.metaKey || e.altKey || ['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) return;
+  setTileStyle(!document.body.classList.contains('simple-tiles'), true);
+});
 window.addEventListener('storage', (e) => {
+  if (e.key === TILE_KEY) { document.body.classList.toggle('simple-tiles', e.newValue !== 'art'); if (V) render(); return; }
   if (e.key !== DN_KEY) return;
   scene.setDayNight(e.newValue !== '0');
   $('chkDayNight').checked = e.newValue !== '0';
@@ -75,6 +91,7 @@ function render() {
   const events = trackAnimations();
   BoardRenderer.render($('board'), V, {
     interactive: !IS_TV,
+    simple: document.body.classList.contains('simple-tiles'),
     onPick: (t) => act('host:place', { target: t.hex != null ? t.hex : t }),
     anim,
   });
